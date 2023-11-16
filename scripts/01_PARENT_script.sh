@@ -92,19 +92,7 @@ conditions_ananse_ATAC=("tcf21_larval"
 )
 
 
-
-##############   DeepSTARR analysis   ##############
-
-# indicate if input data preparation for DeepSTARR should be run ("Yes" or "No")
-deepstarr_analysis="No"
-
-
-# specify conditions to be analysed with DeepSTARR
-conditions_deepstarr=("tcf21_larval" "tcf21_cryo")
-
-
 #################################################################################################################################################
-
 
 
 
@@ -289,46 +277,4 @@ if test $ananse_analysis = "Yes"; then
 fi
 
 
-
-if test $deepstarr_analysis = "Yes"; then
-
-	# save conditions array, to be used in R scripts
-	# replace dashes and dots in condition names with underscores
-	num_cond=${#conditions_deepstarr[@]}
-	for (( i=0; i<$num_cond; i++ ))
-	do
-		if test $i = 0;then
-			echo ${conditions_deepstarr[i]} | tr '-' '_' | tr '.' '_' > ${out_dir}/conditions_deepstarr.txt
-		else
-			echo ${conditions_deepstarr[i]} | tr '-' '_' | tr '.' '_' >> ${out_dir}/conditions_deepstarr.txt
-		fi
-	done
-
-	# run DeepSTARR neural network input preparation script
-	R -f ${script_dir}/15_DeepSTARR_input_preparation.R --args out_dir=$out_dir chr_sizes="${genome_dir}/${genome}.chrom.sizes" bam_dir=$bam_dir \
-        chrom_number=$chrom_number
-
-	# convert DeepSTARR input bed files into fasta files
-	module load bedtools/2.29.2
-	deepstarr_dir="${out_dir}/DeepSTARR_input"
-	sets=("Sequences_Train.bed" "Sequences_Val.bed" "Sequences_Test.bed")
-
-	for (( i=0; i<3; i++ ))
-	do
-		fasta_file=$(echo ${sets[i]} | rev | cut -c 5- | rev).fa
-		echo Generating ${fasta_file} from ${deepstarr_dir}/${sets[i]}
-		bedtools getfasta -fi ${genome_dir}/${genome}.fa -bed ${deepstarr_dir}/${sets[i]} -fo ${deepstarr_dir}/${fasta_file} -nameOnly -s
-
-		wait
-
-		tr -d '(+)' <${deepstarr_dir}/${fasta_file} >${deepstarr_dir}/${fasta_file}.rename
-		tr -d '-' <${deepstarr_dir}/${fasta_file}.rename >${deepstarr_dir}/${fasta_file}
-		rm ${deepstarr_dir}/${fasta_file}.rename
-	done
-fi
-
-
-
-
-echo All done! 
-
+echo All done!
