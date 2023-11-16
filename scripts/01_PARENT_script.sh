@@ -72,14 +72,6 @@ RNA_fastq_dirs=("/ceph/project/tsslab/mweinber/tmp/RNA_tcf21_larval"
 ananse_analysis="Yes"
 
 
-# specify directories containing bulk RNA-seq fastq files (needed for Ananse GRN construction)
-# all fastq files belonging to samples of the same condition should be in the SAME directory, each condition should have a SEPARATE directory
-# fastq file names in each directory should contain the corresponding condition name (see below)
-RNA_fastq_dirs_ananse=("/ceph/project/tsslab/mweinber/tmp/RNA_tcf21_larval"
- "/ceph/project/tsslab/mweinber/tmp/RNA_tcf21_cryo"
-)
-
-
 # specify conditions to be analysed with Ananse
 # the order of entries in "conditions_ananse_RNA" should match the order of directory entries in "RNA_fastq_dirs_ananse"
 # conditions with matching positions in "conditions_ananse_RNA" and "conditions_ananse_ATAC" will be jointly used for GRN construction
@@ -89,6 +81,13 @@ conditions_ananse_RNA=("tcf21_larval"
 
 conditions_ananse_ATAC=("tcf21_larval"
  "tcf21_cryo"
+)
+
+
+# specify directories containing bulk RNA-seq fastq files (needed for Ananse GRN construction)
+# all fastq files belonging to samples of the same condition should be in the SAME directory, each condition should have a SEPARATE directory
+RNA_fastq_dirs_ananse=("/ceph/project/tsslab/mweinber/tmp/RNA_tcf21_larval"
+ "/ceph/project/tsslab/mweinber/tmp/RNA_tcf21_cryo"
 )
 
 
