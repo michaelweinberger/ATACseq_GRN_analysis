@@ -116,7 +116,7 @@ if stat -t *ebwt* >/dev/null 2>&1; then
 	echo Found bowtie index
 else
 	echo Building bowtie genome index
-	bowtie-build -f --threads 12 --quiet ${genome_dir}/${genome}.fa $genome
+	bowtie-build -f --threads 12 --quiet ${genome_dir}/${genome}_subset.fa $genome
 fi
 
 wait
