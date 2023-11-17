@@ -16,7 +16,9 @@ Scripts for an automated analysis pipeline to process bulk ATAC-seq and RNA-seq 
 The pipeline is designed to be run on a high performance cluster, via the Slurm scheduler. Modules loaded in the scripts that we used to run the analysis are:
 R-base/4.2.0, python-base/3.10.7, python-base/3.10.7, bowtie/1.2.3, samtools/1.10, bedtools/2.29.2, ucsctools/385, STAR/2.7.10b, subread/2.0.6, homer/20201202, gimmemotifs/20210114
 
-To run the pipeline, clone the repository via `$ git clone https://github.com/michaelweinberger/ATACseq_GRN_analysis.git` and adjust the `User defined variables` section of the **01_PARENT_script.sh** script:
+To run the pipeline:
+1. Clone the repository via `$ git clone https://github.com/michaelweinberger/ATACseq_GRN_analysis.git`
+2. Adjust the `User defined variables` section of the **01_PARENT_script.sh** script:
 - `script_dir`   Directory containing all scripts copied from https://github.com/michaelweinberger/ATACseq_GRN_analysis/scripts/
 - `out_dir`   Directory containing all output, will be created if non-existent
 - `species`   Name of species that sequencing data was generated in, one of "human", "mouse", "chicken" or "zebrafish"
@@ -30,7 +32,7 @@ To run the pipeline, clone the repository via `$ git clone https://github.com/mi
 - `conditions_ananse_ATAC`   List containing the names of the ATAC-seq experimental conditions to be compared
 - `RNA_fastq_dirs_ananse`   List containing the file paths of the directories containing bulk RNA-seq fastq files to be used during Ananse network construction. The order of directory entries should match the order of condition listed in `conditions_ananse_RNA`. May be the same as `RNA_fastq_dirs`.
 
-Finally, start the analysis via `$ sbatch 01_PARENT_script.sh`
+3. Finally, start the analysis via `$ sbatch 01_PARENT_script.sh`
 
 
 
