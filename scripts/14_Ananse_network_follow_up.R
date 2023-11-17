@@ -19,10 +19,6 @@ for (e in args) {
   assign(argname, argval)
 }
 
-peak_width <- as.numeric(peak_width)
-chrom_number <- as.numeric(chrom_number)
-
-
 
 
 
