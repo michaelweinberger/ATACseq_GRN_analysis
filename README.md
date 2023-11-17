@@ -17,18 +17,18 @@ The pipeline is designed to be run on a high performance cluster, via the Slurm 
 R-base/4.2.0, python-base/3.10.7, python-base/3.10.7, bowtie/1.2.3, samtools/1.10, bedtools/2.29.2, ucsctools/385, STAR/2.7.10b, subread/2.0.6, homer/20201202, gimmemotifs/20210114
 
 To run the pipeline, clone the repository via `$ git clone https://github.com/michaelweinberger/ATACseq_GRN_analysis.git` and adjust the `User defined variables` section of the **01_PARENT_script.sh** script:
-`script_dir`   Directory containing all scripts copied from https://github.com/michaelweinberger/ATACseq_GRN_analysis/scripts/
-`out_dir`   Directory containing all output, will be created if non-existent
-`species`   Name of species that sequencing data was generated in, one of "human", "mouse", "chicken" or "zebrafish"
-`peak_width`   The length in bp that each peak region in the consensus peak set will be adjusted to
-`basic_analysis`   Indicates whether mapping, peak calling, Homer annotation, DiffBind analysis and gimmescan motif calling should be performed, one of “Yes” or “No”. 
-`conditions`   List containing the names of the experimental conditions to be compared
-`ATAC_fastq_dirs`   List containing the file paths of the directories containing bulk ATAC-seq fastq files. Each directory should contain all fastq files of a single condition specified in `conditions`. The order of directory entries should match the order of condition listed in `conditions`.
-`RNA_fastq_dirs`   Optional list containing the file paths of the directories containing bulk RNA-seq fastq files. Each directory should contain all fastq files of a single condition specified in `conditions`. The order of directory entries should match the order of condition listed in `conditions`. RNA-seq data will be used to annotate peak regions exclusively to genes expressed in the condition analysed (during DiffBind differential accessibility analysis). If `RNA_fastq_dirs` is empty, peaks will be annotated using all genes in the gtf file.
-`ananse_analysis`   Indicates whether gene regulatory network construction and analysis should be performed, one of “Yes” or “No”. Basic analysis needs to be run before Ananse analysis can be run.
-`conditions_ananse_RNA`   List containing the names of the RNA-seq experimental conditions to be compared
-`conditions_ananse_ATAC`   List containing the names of the ATAC-seq experimental conditions to be compared
-`RNA_fastq_dirs_ananse`   List containing the file paths of the directories containing bulk RNA-seq fastq files to be used during Ananse network construction. The order of directory entries should match the order of condition listed in `conditions_ananse_RNA`. May be the same as `RNA_fastq_dirs`.
+- `script_dir`   Directory containing all scripts copied from https://github.com/michaelweinberger/ATACseq_GRN_analysis/scripts/
+- `out_dir`   Directory containing all output, will be created if non-existent
+- `species`   Name of species that sequencing data was generated in, one of "human", "mouse", "chicken" or "zebrafish"
+- `peak_width`   The length in bp that each peak region in the consensus peak set will be adjusted to
+- `basic_analysis`   Indicates whether mapping, peak calling, Homer annotation, DiffBind analysis and gimmescan motif calling should be performed, one of “Yes” or “No”. 
+- `conditions`   List containing the names of the experimental conditions to be compared
+- `ATAC_fastq_dirs`   List containing the file paths of the directories containing bulk ATAC-seq fastq files. Each directory should contain all fastq files of a single condition specified in `conditions`. The order of directory entries should match the order of condition listed in `conditions`.
+- `RNA_fastq_dirs`   Optional list containing the file paths of the directories containing bulk RNA-seq fastq files. Each directory should contain all fastq files of a single condition specified in `conditions`. The order of directory entries should match the order of condition listed in `conditions`. RNA-seq data will be used to annotate peak regions exclusively to genes expressed in the condition analysed (during DiffBind differential accessibility analysis). If `RNA_fastq_dirs` is empty, peaks will be annotated using all genes in the gtf file.
+- `ananse_analysis`   Indicates whether gene regulatory network construction and analysis should be performed, one of “Yes” or “No”. Basic analysis needs to be run before Ananse analysis can be run.
+- `conditions_ananse_RNA`   List containing the names of the RNA-seq experimental conditions to be compared
+- `conditions_ananse_ATAC`   List containing the names of the ATAC-seq experimental conditions to be compared
+- `RNA_fastq_dirs_ananse`   List containing the file paths of the directories containing bulk RNA-seq fastq files to be used during Ananse network construction. The order of directory entries should match the order of condition listed in `conditions_ananse_RNA`. May be the same as `RNA_fastq_dirs`.
 
 Finally, start the analysis via `$ sbatch 01_PARENT_script.sh`
 
