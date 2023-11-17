@@ -1,5 +1,5 @@
 
-### Run this script after mapping ATAC-seq data and calling peaks with MACS2
+### Run this script after mapping ATAC-seq data and calling peaks with MACS
 
 
 
@@ -44,7 +44,10 @@ if (!require("ChIPpeakAnno")) BiocManager::install("ChIPpeakAnno")
 ### functions
 
 ## subfunction to exclude peaks overlapping repetitive elements in the genome
-# cutoff: sequence overlap with repetitive elements above which peak will be excluded
+# peak_file: MACS .narrowPeak file
+# repeats_gr: Genomic ranges object specifying repetetive regions in the genome
+# chrom_number: Number of main chromosomes
+# cutoff: Percentage of sequence overlap with repetitive elements above which peak will be excluded
 F_peak_repeat_cleanup <- function (peak_file, repeats_gr, chrom_number, cutoff=50) {
 
   print(paste("Removing repetitive regions from ",peak_file,sep=""))
@@ -59,7 +62,6 @@ F_peak_repeat_cleanup <- function (peak_file, repeats_gr, chrom_number, cutoff=5
   peaks <- peaks[peaks$chr %in% seq(1:chrom_number),]
   
   peaks_gr <- toGRanges(peaks, format="BED")
-
 
   ## intersect peak positions and repetitive element positions
   tmp <- GenomicRanges::intersect(peaks_gr, repeats_gr)
@@ -94,7 +96,14 @@ F_peak_repeat_cleanup <- function (peak_file, repeats_gr, chrom_number, cutoff=5
 
 
 ## function to generate DiffBind peak set file
-diffbind <- function(conditions, bam_dir, peak_dir, out_dir, repeats_file,
+# bam_dir: Directory containing input ATAC-seq bam files
+# peak_dir: Directory containing MACS .narrowPeak files
+# out_dir: Directory containing output rds file
+# repeats_file: File specifying repetetive regions in the genome
+# peak_width: Length of peaks in consensus peak set
+# chr_sizes: File specifying chromosome lengths
+# chrom_number: Number of main chromosomes
+diffbind <- function(bam_dir, peak_dir, out_dir, repeats_file,
                      peak_width, chr_sizes, chrom_number) {
   
   # define sample input information
@@ -240,6 +249,8 @@ diffbind <- function(conditions, bam_dir, peak_dir, out_dir, repeats_file,
 
 
 ## function to generate bed file for UCSC genome browser session and gimmescan analysis
+# diffbind_file: Output of "diffbind" function
+# out_dir: Directory containing output bed file
 ucsc_gimmescan_bed <- function(diffbind_file, out_dir) {
   print(paste("Generating BED file for UCSC genome browser and gimmescan as ",
               paste(out_dir,"/Diffbind_consensus_peak_set_ucsc_gimmescan.bed",sep=""), sep=""))
@@ -268,6 +279,8 @@ ucsc_gimmescan_bed <- function(diffbind_file, out_dir) {
 
 
 ## function to generate bed file for homer peak annotation
+# diffbind_file: Output of "diffbind" function
+# out_dir: Directory containing output bed file
 homer_bed <- function(diffbind_file, out_dir) {
   print(paste("Generating BED file for Homer as ",
               paste(out_dir,"/Diffbind_consensus_peak_set_for_Homer.bed",sep=""), sep=""))
@@ -287,6 +300,9 @@ homer_bed <- function(diffbind_file, out_dir) {
 
 
 ## function to generate chromosome size file for UCSC genome browser
+# chr_sizes: File with chromosome lengths (chromosome names in ensembl format)
+# genome: Name of genome used in analysis
+# out_dir: Directory containing output chromosome sizes file
 ucsc_chrom_sizes <- function(chr_sizes, genome, out_dir) {
   print(paste("Generating chromosome sizes file for UCSC genome browser as ",
               paste(out_dir,"/",genome,"_ucsc.chrom.sizes",sep=""), sep=""))
@@ -319,11 +335,9 @@ ucsc_chrom_sizes <- function(chr_sizes, genome, out_dir) {
 
 print("Generating DiffBind consensus peak set")
 
-conditions <- unlist(read.table(paste(conditions_dir, "/conditions.txt", sep=""), sep=" "))
-
 
 ## generate input for DiffBind
-diffbind_peak_set <- diffbind(conditions=conditions, bam_dir=bam_dir, peak_dir=peak_dir, 
+diffbind_peak_set <- diffbind(bam_dir=bam_dir, peak_dir=peak_dir, 
                               out_dir=out_dir, repeats_file=repeats_file,
                               peak_width=peak_width, chr_sizes=chr_sizes, chrom_number=chrom_number)
 
