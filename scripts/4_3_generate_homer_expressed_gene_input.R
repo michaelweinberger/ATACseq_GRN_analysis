@@ -38,8 +38,7 @@ if (!require("edgeR")) BiocManager::install("edgeR")
 # condition: Part of column name(s) identifying samples belonging to the same condition
 # rpkm_cutoff: Minimum RPKM value for a gene to be considered expressed
 # out_dir: Directory for output text file listing gene IDs of expressed genes
-extract_expressed_genes <- function(feature_counts_file, condition, rpkm_cutoff=2.5,
-						out_dir) {
+extract_expressed_genes <- function(feature_counts_file, condition, rpkm_cutoff=2.5, out_dir) {
 
   all_data <- read.table(feature_counts_file, header=TRUE)
 
@@ -70,8 +69,6 @@ extract_expressed_genes <- function(feature_counts_file, condition, rpkm_cutoff=
 
   return(expressed_genes)
 }
-
-
 
 
 
