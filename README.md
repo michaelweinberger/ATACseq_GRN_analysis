@@ -1,13 +1,15 @@
 # ATAC-seq and gene regulatory network analysis
 ---
 Scripts for an automated analysis pipeline to process bulk ATAC-seq and RNA-seq data, including:
-- Mapping of bulk ATAC-seq fastq files via [bowtie] (https://bowtie-bio.sourceforge.net/manual.shtml) [^1] 
-- Mapping of bulk RNA-seq fastq files via [STAR] (https://github.com/alexdobin/STAR) 2
-- Peak calling via the Python [MACS3] (https://github.com/macs3-project/MACS)^3^ package
-- Genomic feature annotation of peak regions via [Homer] (http://homer.ucsd.edu/homer/ngs/annotation.html)^4^
-- Differential peak accessibility analysis using the R [DiffBind] (https://bioconductor.org/packages/release/bioc/html/DiffBind.html)^5^ and [DESeq2] (https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html)^6^ packages
-- Motif calling across peak regions via [gimmescan] (https://gimmemotifs.readthedocs.io/en/master/reference.html#command-gimme-scan)^7^
-- Gene regulatory network (GRN) construction via the Python [Ananse] (https://anansepy.readthedocs.io/en/master/)^8^ package
+- Mapping of bulk ATAC-seq fastq files via [bowtie] (https://bowtie-bio.sourceforge.net/manual.shtml) [1] 
+- Mapping of bulk RNA-seq fastq files via [STAR] (https://github.com/alexdobin/STAR) [2]
+- Peak calling via the Python [MACS3] (https://github.com/macs3-project/MACS) [3] package
+- Genomic feature annotation of peak regions via [Homer] (http://homer.ucsd.edu/homer/ngs/annotation.html) [4]
+- Differential peak accessibility analysis using the R [DiffBind] (https://bioconductor.org/packages/release/bioc/html/DiffBind.html) [5] and [DESeq2] (https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html) [6] packages
+- Motif calling across peak regions via [gimmescan] (https://gimmemotifs.readthedocs.io/en/master/reference.html#command-gimme-scan) [7]
+- Gene regulatory network (GRN) construction via the Python [Ananse] (https://anansepy.readthedocs.io/en/master/) [8] package
+
+
 
 ## Usage
 ---
@@ -30,6 +32,8 @@ To run the pipeline, clone the repository via `$ git clone https://github.com/mi
 
 Finally, start the analysis via `$ sbatch 01_PARENT_script.sh`
 
+
+
 ## Pipeline details
 ---
 1. **2_1_genome_files_SH.sh**
@@ -38,22 +42,22 @@ Input: None
 Output: [out_dir]/genomes directory containing genome fasta and gtf files, subset to main chromosomes, as well as chromosome sizes and repeat regions rmsk.txt file
 
 2. **2_2_loop_mapping_SH.sh**
-Generates bowtie 1 genome index, concatenates ATAC-seq fastq files across sequencing lanes, maps concatenated fast files, generates bam files, removes duplicate reads, counts number of entries in final bam files and generates bigwig files (e.g. for UCSC genome browser session).
+Generates bowtie [1] genome index, concatenates ATAC-seq fastq files across sequencing lanes, maps concatenated fast files, generates bam files, removes duplicate reads, counts number of entries in final bam files and generates bigwig files (e.g. for UCSC genome browser session).
 Input: fastq files located in directories specified in `ATAC_fastq_dirs`, genome files in [out_dir]/genomes
 Output: Bowtie genome index in [out_dir]/genomes; concatenated fastq files in [out_dir]/cat_fastq_ATAC; bowtie.log files in [out_dir]/bowtie_[genome]_mapped; .rmdup.bam, bedgraph (.bg) and bigwig (.bw) files in [out_dir]/bowtie_[genome]_mapped/BAM_files
 
 3. **2_3_loop_peak_calling_SH.sh**
-Performs peak calling via MACS 3.
+Performs peak calling via MACS [3].
 Input: .rmdup.bam files in [out_dir]/bowtie_[genome]_mapped/BAM_files
 Output: peaks.narrowPeak, control_lambda.bdg, peaks.xls, summits.bed and treat_pileup.bdg files in [out_dir]/MACS
 
 4. **3_DiffBind_input_prep.R**
-Removes peaks overlapping repeat regions in out_dir/genomes/rmsk.txt by at least 50% of peak length. Constructs a consensus peak set across all samples, adjusts peak length to `peak_width` and counts entries in bam files mapping to consensus peak regions.
+Removes peaks overlapping repeat regions in out_dir/genomes/rmsk.txt by at least 50% of peak length. Constructs a consensus peak set across all samples using DiffBind [5], adjusts peak length to `peak_width` and counts entries in bam files mapping to consensus peak regions.
 Input: peaks.narrowPeak files in [out_dir]/MACS; .rmdup.bam files in [out_dir]/bowtie_[genome]_mapped/BAM_files; rmsk.txt and .chrom.sizes file in [out_dir]/genomes; conditions.txt file in [out_dir]
 Output: peaks.narrowPeak files with peaks overlapping repetitive elements removed in [out_dir]/MACS/No_repetitive_elements; Diffbind_sample_sheet.csv, Diffbind_consensus_peak_set rds and bed files, sample correlation pdf files in [out_dir]/DiffBind; [genome]_subset_ucsc.chrom.sizes file with chromosome sizes in UCSC nomenclature in [out_dir]/genomes
 
 5. **4_1_loop_mapping_RNA_SH.sh** (optional)
-Generates STAR 2 genome index, concatenates RNA-seq fastq files across sequencing lanes, maps concatenated fast files, generates bam files, removes duplicate reads, counts number of entries in final bam files, generates bigwig files (e.g. for UCSC genome browser session) and summarises read counts in bam files via featureCounts 9. 
+Generates STAR [2] genome index, concatenates RNA-seq fastq files across sequencing lanes, maps concatenated fast files, generates bam files, removes duplicate reads, counts number of entries in final bam files, generates bigwig files (e.g. for UCSC genome browser session) and summarises read counts in bam files via featureCounts [9]. 
 Input: fastq files located in directories specified in `RNA_fastq_dirs`; [genome]_subset.fa, [genome]_subset.gtf, [genome]_subset.chrom.sizes in [out_dir]/genomes
 Output: STAR genome index in [out_dir]/genomes/STAR_[genome]_subset; concatenated fastq files in [out_dir]/cat_fastq_RNA; STAR log files in [out_dir]/STAR_[genome]_mapped/[sample]_mapped; .rmdup.bam, bedgraph (.bg) and bigwig (.bw) files in [out_dir]/STAR_[genome]_mapped/BAM_files; featureCounts output file in [out_dir]/STAR_[genome]_mapped
 
@@ -69,27 +73,27 @@ Input: featureCounts_final.txt in [out_dir]/STAR_[genome]_mapped
 Output: Expressed genes text files in [out_dir]/STAR_[genome]_mapped
 
 8. **5_loop_homer_annotation_SH.sh**
-Analyses transcriptional start site (TSS) coverage in bam files, annotates consensus peak set to genomic features using Homer 4. Optionally subsets gtf file to expressed genes and annotates peaks to expressed genes. Generates bigbed file of consensus peak set (can be added to UCSC genome browser session).
+Analyses transcriptional start site (TSS) coverage in bam files, annotates consensus peak set to genomic features using Homer [4]. Optionally subsets gtf file to expressed genes and annotates peaks to expressed genes. Generates bigbed file of consensus peak set (can be added to UCSC genome browser session).
 Input: .rmdup.bam files in [out_dir]/bowtie_[genome]_mapped/BAM_files; [genome]_subset.fa and [genome]_subset.gtf in [out_dir]/genomes; Diffbind_consensus_peak_set_for_Homer.bed and Diffbind_consensus_peak_set_ucsc_gimmescan.bed in [out_dir]/DiffBind; [genome]_subset_ucsc.chrom.sizes file in [out_dir]/genomes; Expressed genes text files in [out_dir]/STAR_[genome]_mapped (optional)
 Output: Tag directory for each sample, Tag_density_tss.txt, Diffbind_consensus_peak_set_annotated text files in [out_dir]/homer_peak_annotation; Diffbind_consensus_peak_set_ucsc.bb bigbed file in [out_dir]/DiffBind; Expressed genes gtf files in [out_dir]/STAR_[genome]_mapped (optional)
 
 9. **6_Homer_annotation.R**
-Processes Homer 4 peak annotation output, plots TSS coverage and genomic feature frequencies within consensus peak set.
+Processes Homer [4] peak annotation output, plots TSS coverage and genomic feature frequencies within consensus peak set.
 Input: Diffbind_consensus_peak_set_annotated text files in [out_dir]/homer_peak_annotation
 Output: Diffbind_annotated_peaks_gene_names rds file, Diffbind_annotated_peaks_gene_names_genomic_feat_freq.pdf, Diffbind_annotated_peaks_gene_names_genomic_feat_gc.pdf, Diffbind_annotated_peaks_gene_names_genomic_feat_cpg.pdf, Diffbind_annotated_peaks_gene_names_tss_enrichment.pdf in [out_dir]/DiffBind
 
 10. **7_DiffBind_DESeq_analysis.R**
-Performs differential peak accessibility analysis between conditions using the R DESeq2 6 package.
+Performs differential peak accessibility analysis between conditions using the R DESeq2 [6] package.
 Input: Diffbind_consensus_peak_set, Diffbind_annotated_peaks_gene_names rds files in [out_dir]/DiffBind; conditions.txt in [out_dir]
 Output: DESeq2_ATAC rds files, DESeq2_ATAC csv files with enriched peaks, DESeq2_ATAC volcano plots of logfoldchange versus adjusted p value, DESeq2_ATAC heatmap of accessibility of top differentially accessible peaks in [out_dir]/DiffBind
 
 11. **8_JASPAR2020_gimmescan_SH.sh**
-Generates JASPAR2020 10 transcription factor motif pfm file, calls JASPAR2020 motifs across consensus peaks using gimmescan 7 (false positive rate 0.05).
+Generates JASPAR2020 [10] transcription factor motif pfm file, calls JASPAR2020 motifs across consensus peaks using gimmescan [7] (false positive rate 0.05).
 Input: Diffbind_consensus_peak_set_ucsc_gimmescan.bed in [out_dir]/DiffBind
 Output: JASPAR2020.pfm in [out_dir], gimme_scan_JASPAR2020_n10000_fpr0_05.txt  in [out_dir]/gimmescan
 
 12. **9_loop_mapping_RNA_SH.sh**
-Generates STAR 2 genome index, concatenates RNA-seq fastq files across sequencing lanes, maps concatenated fast files, generates bam files, removes duplicate reads, counts number of entries in final bam files, generates bigwig files (e.g. for UCSC genome browser session) and summarises read counts in bam files via featureCounts 9. 
+Generates STAR [2] genome index, concatenates RNA-seq fastq files across sequencing lanes, maps concatenated fast files, generates bam files, removes duplicate reads, counts number of entries in final bam files, generates bigwig files (e.g. for UCSC genome browser session) and summarises read counts in bam files via featureCounts [9]. 
 Input: fastq files located in directories specified in `RNA_fastq_dirs_ananse`; [genome]_subset.fa, [genome]_subset.gtf, [genome]_subset.chrom.sizes in [out_dir]/genomes
 Output: STAR genome index in [out_dir]/genomes/STAR_[genome]_subset; concatenated fastq files in [out_dir]/cat_fastq_RNA_ananse; STAR log files in [out_dir]/STAR_[genome]_mapped_ananse/[sample]_mapped; .rmdup.bam, bedgraph (.bg) and bigwig (.bw) files in [out_dir]/STAR_[genome]_mapped_ananse/BAM_files; featureCounts output file in [out_dir]/STAR_[genome]_mapped_ananse
 
@@ -109,7 +113,7 @@ Input: [genome]_subset.gtf in [out_dir]/genomes; featureCounts_final.txt in [out
 Output: ANANSE_TPM.txt files per sample, ANANSE_[genome]_gene_positions.bed in [out_dir]/Ananse/Ananse_input
 
 16. **13_Ananse_SH.sh**
-Constructs GRNs using Ananse 8.
+Constructs GRNs using Ananse [8].
 Input: .rmdup.bam files in [out_dir]/STAR_[genome]_mapped_ananse/BAM_files; _peaks.narrowPeak files in [out_dir]/MACS/No_repetitive_elements; [genome]_subset.fa in [out_dir]/genomes; JASPAR2020.pfm in [out_dir]; ANANSE_TPM.txt files per sample, ANANSE_[genome]_gene_positions.bed in [out_dir]/Ananse/Ananse_input
 Output: binding.h5 files in [out_dir]/Ananse/Ananse_output/[condition]_jaspar2020_binding; Network_[condition]_jaspar2020_pro_enh.txt in [out_dir]/Ananse/Ananse_output
 
@@ -117,7 +121,9 @@ Output: binding.h5 files in [out_dir]/Ananse/Ananse_output/[condition]_jaspar202
 Analyses number of connections and TFs within GRNs, subsets GRNs (probability above 0.75), generates centrality comparison dot plots between condition, plots centrality heatmap
 Input: JASPAR2020.motif2factors.txt in [out_dir]; conditions_ananse_RNA.txt in [out_dir]/Ananse/Ananse_input; _jaspar2020_pro_enh.txt files in [out_dir]/Ananse/Ananse_output
 Output: Ananse_network subset text files, _connections.pdf,  _factors.pdf, _factor_binding.pdf,  Ananse_network_centrality_jaspar2020_[condition].csv, ananse_network_dot_jaspar2020_ pdf file comparing centrality values, ananse_network_heatmap_jaspar2020.pdf in [out_dir]/Ananse/Ananse_output
- 
+
+
+
 ## References
 ---
 
