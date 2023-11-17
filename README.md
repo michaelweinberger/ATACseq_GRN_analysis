@@ -1,8 +1,8 @@
 # ATAC-seq and gene regulatory network analysis
 ---
 Scripts for an automated analysis pipeline to process bulk ATAC-seq and RNA-seq data, including:
-- Mapping of bulk ATAC-seq fastq files via [bowtie] (https://bowtie-bio.sourceforge.net/manual.shtml)^1^ 
-- Mapping of bulk RNA-seq fastq files via [STAR] (https://github.com/alexdobin/STAR)^2^
+- Mapping of bulk ATAC-seq fastq files via [bowtie] (https://bowtie-bio.sourceforge.net/manual.shtml) ^1^ 
+- Mapping of bulk RNA-seq fastq files via [STAR] (https://github.com/alexdobin/STAR) ^2^
 - Peak calling via the Python [MACS3] (https://github.com/macs3-project/MACS)^3^ package
 - Genomic feature annotation of peak regions via [Homer] (http://homer.ucsd.edu/homer/ngs/annotation.html)^4^
 - Differential peak accessibility analysis using the R [DiffBind] (https://bioconductor.org/packages/release/bioc/html/DiffBind.html)^5^ and [DESeq2] (https://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html)^6^ packages
