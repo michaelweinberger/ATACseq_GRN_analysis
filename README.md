@@ -37,8 +37,10 @@ To run the pipeline:
 - `conditions_ananse_ATAC`   List containing the names of the ATAC-seq experimental conditions to be compared
 - `RNA_fastq_dirs_ananse`   List containing the file paths of the directories containing bulk RNA-seq fastq files to be used during Ananse network construction. The order of directory entries should match the order of condition listed in `conditions_ananse_RNA`. May be the same as `RNA_fastq_dirs`.
 
-3. Finally, start the analysis via `$ sbatch 01_PARENT_script.sh`
-
+3. Finally, start the analysis via
+```
+sbatch 01_PARENT_script.sh
+```
 
 
 ## Pipeline details
