@@ -18,7 +18,10 @@ R-base/4.2.0, python-base/3.10.7, python-base/3.10.7, bowtie/1.2.3, samtools/1.1
 
 To run the pipeline:
 
-1. Clone the repository via `$ git clone https://github.com/michaelweinberger/ATACseq_GRN_analysis.git`
+1. Clone the repository via:
+```
+    git clone https://github.com/michaelweinberger/ATACseq_GRN_analysis.git
+```
    
 2. Adjust the `User defined variables` section of the **01_PARENT_script.sh** script:
 - `script_dir`   Directory containing all scripts copied from https://github.com/michaelweinberger/ATACseq_GRN_analysis/scripts/
