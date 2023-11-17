@@ -48,6 +48,8 @@ if (!require("rtracklayer")) BiocManager::install("rtracklayer")
 ### Functions
 
 ## subfunction to generate TPM values
+# read_count: List of raw gene expression read counts
+# gene_length: List of gene lengths in bp, gene order matching the order in read_count
 to_tpm <- function(read_count, gene_length) {
   gene_length_kb <- gene_length / 1000
   rpk <- read_count / gene_length_kb
@@ -58,7 +60,10 @@ to_tpm <- function(read_count, gene_length) {
 
 
 
-## function to generate TPM values of bulk RNAseq data 
+## function to generate TPM values of bulk RNAseq data
+# feature_counts_file: Processed featureCounts output file
+# condition: Name of condition that feature_counts_file will be subset to
+# out_dir: Directory containing output
 tpm_bulk <- function(feature_counts_file, condition, out_dir) {
 
   # read in bulk RNA-seq data
@@ -99,6 +104,9 @@ tpm_bulk <- function(feature_counts_file, condition, out_dir) {
 
 
 ## function to generate gene position bed file for Ananse Network
+# gtf_file: File path to genome .gtf file
+# genome: Name of genome
+# out_dir: Directory containing output
 ananse_gene_pos <- function(gtf_file, genome, out_dir) {
 
   # create a mapping of ensembl gene id to gene name
