@@ -216,7 +216,7 @@ if test $ananse_analysis = "Yes"; then
 	# define important directories from previous analysis part
 	sam_dir="${out_dir}/bowtie_${genome}_mapped"
 	bam_dir="${sam_dir}/BAM_files"
-	peak_dir="${out_dir}/MACS"
+	peak_dir="${out_dir}/MACS/No_repetitive_elements"
 
 	# create Ananse directories
 	ananse_input_dir="${out_dir}/Ananse/Ananse_input"
