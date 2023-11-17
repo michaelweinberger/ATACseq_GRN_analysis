@@ -32,7 +32,9 @@ if (!require("rtracklayer")) BiocManager::install("rtracklayer")
 ### functions
 
 ## function to read in and process featureCounts file
-
+# feature_counts_file_raw: Raw featureCounts output file
+# gtf_file: Genome .gtf file
+# out_dir: Directory containing processed featureCounts file
 fc_process <- function(feature_counts_file_raw, gtf_file, out_dir) {
   
   # read in featureCounts output file 
