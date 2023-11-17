@@ -31,7 +31,7 @@ do
 		echo Ananse Binding analysis of ${conditions_ananse_ATAC[k]} using ${ananse_input_dir}/JASPAR2020.pfm database
 
 		bam_input=$(find ${bam_dir} -maxdepth 1 -regex ${bam_dir}/${conditions_ananse_ATAC[k]}.*rmdup\.bam$)
-		peak_input=$(find ${peak_dir} -maxdepth 1 -regex ${peak_dir}/${conditions_ananse_ATAC[k]}.*_peaks\.narrowPeak)
+		peak_input=$(find ${peak_dir} -maxdepth 1 -regex ${peak_dir}/.*${conditions_ananse_ATAC[k]}.*_peaks\.narrowPeak)
 		echo Bam files: ${bam_input}
 		echo Peak files: ${peak_input}
 	
