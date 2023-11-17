@@ -271,7 +271,7 @@ if test $ananse_analysis = "Yes"; then
 
 	# run Ananse output processing script
 	R -f ${script_dir}/14_Ananse_network_follow_up.R --args ananse_input_dir=${ananse_input_dir} ananse_output_dir=${ananse_output_dir} \
-        peak_width=${peak_width} chrom_number=${chrom_number} out_dir=${out_dir}
+        out_dir=${out_dir}
 fi
 
 
