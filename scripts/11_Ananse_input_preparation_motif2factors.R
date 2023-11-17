@@ -36,7 +36,10 @@ if (!require("biomaRt")) BiocManager::install("biomaRt")
 
 ### functions
 
-# subfunction to account for multiple gene ids annotated to the same gene name
+## subfunction to account for multiple gene ids annotated to the same gene name
+# df: Dataframe with gene IDs and gene names
+# col_id: Name of column containing gene IDs
+# col_name: Name of column containing gene names
 gene_names_make_unique <- function(df, col_id, col_name) {
   tmp <- unique(df[,c(col_id, col_name)])
   tmp[,col_name] <- make.names(tmp[,col_name], unique=TRUE)
@@ -48,11 +51,17 @@ gene_names_make_unique <- function(df, col_id, col_name) {
 
 
 
-# subfunction to map gene names from one species to another
+## subfunction to map gene names from one species to another
+# genes: List of ensembl gene IDs
+# mart_1: Biomart object, using same species as genes (species 1)
+# mart_2: Biomart object, using species to convert gene IDs to (species 2)
+# init_1: Initials of species 1
+# init_2: Initials of species 2
+# out_dir: Directory containing output
 map_gene_names <- function(genes, mart_1, mart_2, init_1, init_2, out_dir) {
   
   mapping <- getLDS(attributes = c("ensembl_gene_id","external_gene_name"),
-                    filters = "ensembl_gene_id", values = rownames(genes), 
+                    filters = "ensembl_gene_id", values = genes, 
                     mart = mart_1,
                     attributesL = c("ensembl_gene_id","external_gene_name"), 
                     martL = mart_2)
@@ -74,11 +83,15 @@ map_gene_names <- function(genes, mart_1, mart_2, init_1, init_2, out_dir) {
 
 
 ## function to generate files mapping human or mouse gene names to zebrafish or chicken gene names
+# gtf_file: Genome .gtf file
+# organism: Name of organism (e.g. "Homo sapiens")
+# out_dir: Directory containing output
 map_gene_names_species <- function(gtf_file, organism, out_dir) {
   
   # extract gene data from gtf file
   txdb <- makeTxDbFromGFF(gtf_file, format="gtf", organism=organism)
-  genes <- as.data.frame(genes(txdb))
+  genes_df <- as.data.frame(genes(txdb))
+  genes <- rownames(genes_df)
   
   # create a mapping of ensembl gene id and gene name across species
   initials_2 <- "hs"
@@ -119,7 +132,11 @@ map_gene_names_species <- function(gtf_file, organism, out_dir) {
 
 
 
-# subfunction to convert human/mouse TF names in motif2factors file to chicken or zebrafish TF names
+## subfunction to convert human/mouse TF names in motif2factors file to chicken or zebrafish TF names
+# motif2factors: Dataframe containing TF motif names and TF names
+# target_organism_initials: Initials of species TF names are converted to
+# target_to_hs_gene_mapping: Dataframe containing human to chicken or zebrafish gene mapping
+# target_to_mm_gene_mapping: Dataframe containing mouse to chicken or zebrafish gene mapping
 motif2factors_to_gg_dr <- function(motif2factors, target_organism_initials,
                                    target_to_hs_gene_mapping, target_to_mm_gene_mapping) {
   
@@ -164,7 +181,10 @@ motif2factors_to_gg_dr <- function(motif2factors, target_organism_initials,
 
 
 
-# subfunction to convert human/mouse TF names in motif2factors file to all human or mouse TF names
+## subfunction to convert human/mouse TF names in motif2factors file to all human or all mouse TF names
+# motif2factors: Dataframe containing TF motif names and TF names
+# target_organism_initials: Initials of species TF names are converted to
+# mm_hs_gene_mapping: Dataframe containing mouse to human gene mapping
 motif2factors_to_hs_mm <- function(motif2factors, target_organism_initials, mm_hs_gene_mapping) {
   
   init <- target_organism_initials
@@ -209,6 +229,8 @@ motif2factors_to_hs_mm <- function(motif2factors, target_organism_initials, mm_h
 
 
 ## function to annotate binding motifs to transcription factors using JASPAR2020
+# organism: Name of organism (e.g. "Homo sapiens")
+# out_dir: Directory containing output
 map_tf_motifs_names_jaspar <- function(organism, out_dir) {
   
   # generate motif2factors file
