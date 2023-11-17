@@ -40,7 +40,10 @@ if (!require("rlist")) install.packages("rlist")
 
 ### functions
 
-## subfunction to extract significantly enriched peaks and annotate to closest expressed gene
+## subfunction to annotate differential peak accessibility output to genomic features
+# peak_df: Dataframe containing DESEq2 output (logfoldchange and padj per peak)
+# annotation_df: Dataframe containing Homer annotated consensus peak set
+# annotation_col: Name of column in annotation_df that will be used to annotate peaks in peak_df
 annotate_peaks <- function(peak_df, annotation_df, annotation_col) {
   peak_df$PeakID <- rownames(peak_df)
   peak_df <- merge(peak_df, annotation_df[,c("PeakID","Feature","CpG","GC",annotation_col)], by="PeakID")
@@ -53,12 +56,23 @@ annotate_peaks <- function(peak_df, annotation_df, annotation_col) {
 
 
 
-## function to run DESeq2 comparison of samples in condition_1 versus samples in condition_2,
-# as identified by colnames
-# batch_list (optional): list of integers defining batch numbers of samples
-deseq2_run <- function(count_df, rpkm_df, annotation_df, annotation_col_1, annotation_col_2,
-                       condition_1, condition_2, batch_list, volcano_label="top_diff", 
-                       n_top_diff=10, n_peaks_heatmap=10, out_dir) {
+## function to run DESeq2 comparison of samples in condition_1 versus samples in condition_2, as identified by colnames
+# count_df: Dataframe containing DiffBind consensus peak set including raw read counts per sample
+# rpkm_df: Dataframe containing DiffBind consensus peak set including RPKM transformed read counts per sample
+# condition_1: Name of first condition to be analysed
+# condition_2: Name of condition to compare condition_1 to
+# batch_list: Optional list of integers defining batch numbers of samples, first samples of condition_1 then samples of condition_2 
+# annotation_df: Dataframe containing Homer annotated consensus peak set
+# annotation_col_1: Name of column in annotation_df that will be used to annotate peaks enriched in condition_1
+# annotation_col_2: Name of column in annotation_df that will be used to annotate peaks enriched in condition_2
+# volcano_label: Label peaks in volcano plot, either "top_diff" (label n_top_diff peaks with highest adjusted p values),
+#                or list of gene names (label all peaks annotated to specified genes)
+# n_top_diff: Number of top differentially accessible peaks to label in volcano plot, if volcano_label="top_diff"
+# n_peaks_heatmap: Number of top differentially accessible peaks to plot in accessiblity heatmap
+# out_dir: Directory containing output
+deseq2_run <- function(count_df, rpkm_df, condition_1, condition_2, batch_list, 
+                       annotation_df, annotation_col_1, annotation_col_2,
+                       volcano_label="top_diff", n_top_diff=10, n_peaks_heatmap=10, out_dir) {
   for (i in seq(1,length(condition_1))) {
     tmp <- grep(condition_1[i], colnames(count_df))
     if (i == 1) {
