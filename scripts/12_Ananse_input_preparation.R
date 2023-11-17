@@ -17,12 +17,6 @@ for (e in args) {
   assign(argname, argval)
 }
 
-peak_width <- as.numeric(peak_width)
-chrom_number <- as.numeric(chrom_number)
-
-conditions_ATAC <- unlist(read.table(paste(out_dir, "/conditions_ananse_ATAC.txt", sep=""), sep=" "))
-conditions_RNA <- unlist(read.table(paste(out_dir, "/conditions_ananse_RNA.txt", sep=""), sep=" "))
-
 
 
 
@@ -151,11 +145,16 @@ ananse_gene_pos <- function(gtf_file, genome, out_dir) {
 
 print("Performing Ananse input preparation")
 
+#conditions_ATAC <- unlist(read.table(paste(out_dir, "/conditions_ananse_ATAC.txt", sep=""), sep=" "))
+conditions_RNA <- unlist(read.table(paste(out_dir, "/conditions_ananse_RNA.txt", sep=""), sep=" "))
+
+
 # generate single RNAseq condition TPM value files
 for (condition in conditions_RNA) {
   tpm_values <- tpm_bulk(feature_counts_file=feature_counts_file, 
                          condition=condition, out_dir=out_dir)
 }
+
 
 # generate gene position bed file for Ananse Network
 gene_pos <- ananse_gene_pos(gtf_file=gtf_file, genome=genome, out_dir=out_dir)
