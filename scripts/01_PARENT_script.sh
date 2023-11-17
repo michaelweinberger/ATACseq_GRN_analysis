@@ -262,9 +262,8 @@ if test $ananse_analysis = "Yes"; then
 	fi
 
 	# run Ananse input preparation script
-	R -f ${script_dir}/12_Ananse_input_preparation.R --args peak_dir=${peak_dir} bam_dir=${bam_dir} out_dir=${ananse_input_dir} \
-        peak_width=${peak_width} chr_sizes="${genome_dir}/${genome}_subset.chrom.sizes" chrom_number=${chrom_number} \
-        genome=${genome} species=${species} gtf_file="${genome_dir}/${genome}_subset.gtf" \
+	R -f ${script_dir}/12_Ananse_input_preparation.R --args out_dir=${ananse_input_dir} \
+        genome=${genome} gtf_file="${genome_dir}/${genome}_subset.gtf" \
 	feature_counts_file=${sam_dir_2}/featureCounts_final.txt
 
 	# run Ananse
