@@ -128,9 +128,8 @@ wait
 
 
 
-
 ### concatenate fastq files across different sequencing lanes
-cat_fastq_dir_2="${out_dir}/cat_fastq_RNA"
+cat_fastq_dir_2="${out_dir}/cat_fastq_RNA_ananse"
 [ ! -d "$cat_fastq_dir_2" ] && mkdir -p "$cat_fastq_dir_2"
 
 # loop through list of fastq directories
@@ -158,7 +157,7 @@ wait
 
 ### map reads and process mapped files
 
-sam_dir_2="${out_dir}/STAR_${genome}_mapped"
+sam_dir_2="${out_dir}/STAR_${genome}_mapped_ananse"
 [ ! -d "$sam_dir_2" ] && mkdir -p "$sam_dir_2"
 
 cd $cat_fastq_dir_2
