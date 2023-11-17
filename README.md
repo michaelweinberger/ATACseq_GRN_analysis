@@ -39,11 +39,11 @@ Finally, start the analysis via `$ sbatch 01_PARENT_script.sh`
 1. **2_1_genome_files_SH.sh**
 Generates genome files for the specified species.
 - Input: None
-- Output: [out_dir]/genomes directory containing genome fasta and gtf files, subset to main chromosomes, as well as chromosome sizes and repeat regions rmsk.txt file
+- Output: `[out_dir]/genomes` directory containing genome `fasta` and `gtf` files, subset to main chromosomes, as well as `chromosome sizes` and repeat regions `rmsk.txt` file
 
 2. **2_2_loop_mapping_SH.sh**
 Generates bowtie [1] genome index, concatenates ATAC-seq fastq files across sequencing lanes, maps concatenated fast files, generates bam files, removes duplicate reads, counts number of entries in final bam files and generates bigwig files (e.g. for UCSC genome browser session).
-- Input: fastq files located in directories specified in `ATAC_fastq_dirs`, genome files in [out_dir]/genomes
+- Input: `fastq` files located in directories specified in `ATAC_fastq_dirs`, [genome]_subset.fa in `[out_dir]/genomes`
 - Output: Bowtie genome index in [out_dir]/genomes; concatenated fastq files in [out_dir]/cat_fastq_ATAC; bowtie.log files in [out_dir]/bowtie_[genome]_mapped; .rmdup.bam, bedgraph (.bg) and bigwig (.bw) files in [out_dir]/bowtie_[genome]_mapped/BAM_files
 
 3. **2_3_loop_peak_calling_SH.sh**
