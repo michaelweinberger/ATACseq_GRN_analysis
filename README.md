@@ -13,7 +13,7 @@ Scripts for an automated analysis pipeline to process bulk ATAC-seq and RNA-seq 
 
 ## Usage
 ---
->The pipeline is designed to be run on a high performance cluster, via the Slurm scheduler. Modules loaded in the scripts that we used to run the analysis are:
+> The pipeline is designed to be run on a high performance cluster, via the Slurm scheduler. Modules loaded in the scripts that we used to run the analysis are:
 R-base/4.2.0, python-base/3.10.7, python-base/3.10.7, bowtie/1.2.3, samtools/1.10, bedtools/2.29.2, ucsctools/385, STAR/2.7.10b, subread/2.0.6, homer/20201202, gimmemotifs/20210114
 
 To run the pipeline:
