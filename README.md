@@ -12,7 +12,7 @@ Scripts for an automated analysis pipeline to process bulk ATAC-seq and RNA-seq 
 
 
 ## Usage
----
+
 The pipeline is designed to be run on a high performance cluster, via the Slurm scheduler. Modules loaded in the scripts that we used to run the analysis are:
 R-base/4.2.0, python-base/3.10.7, python-base/3.10.7, bowtie/1.2.3, samtools/1.10, bedtools/2.29.2, ucsctools/385, STAR/2.7.10b, subread/2.0.6, homer/20201202, gimmemotifs/20210114
 
@@ -44,7 +44,7 @@ sbatch 01_PARENT_script.sh
 
 
 ## Pipeline details
----
+
 1. **2_1_genome_files_SH.sh**
 Generates genome files for the specified species.
 - Input: None
@@ -133,7 +133,6 @@ Analyses number of connections and TFs within GRNs, subsets GRNs (probability ab
 
 
 ## References
----
 
 1.	Langmead, B., Trapnell, C., Pop, M., and Salzberg, S.L. (2009). Ultrafast and memory-efficient alignment of short DNA sequences to the human genome. Genome Biol 10, R25. 10.1186/gb-2009-10-3-r25.
 2.	Dobin, A., Davis, C.A., Schlesinger, F., Drenkow, J., Zaleski, C., Jha, S., Batut, P., Chaisson, M., and Gingeras, T.R. (2013). STAR: ultrafast universal RNA-seq aligner. Bioinformatics 29, 15-21. 10.1093/bioinformatics/bts635.
