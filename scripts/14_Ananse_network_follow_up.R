@@ -42,24 +42,28 @@ if (!require("igraph")) install.packages("igraph")
 ### functions
 
 ## function to extract and plot statistics from entire network
-ananse_net_stats <- function(input_df, out_prefix, factors, out_dir) {
+# network: Dataframe containing Ananse network output
+# out_prefix: Prefix to use in output names
+# factors: List of transcription factor gene names
+# out_dir: Directory containing output
+ananse_net_stats <- function(network, out_prefix, factors, out_dir) {
 
-  input_df[,1] <- tolower(input_df[,1])
+  network[,1] <- tolower(network[,1])
 
   # split TF target column
-  input_df[,c("source","target")] <- read.table(text=input_df$tf_target, 
+  network[,c("source","target")] <- read.table(text=network$tf_target, 
                                                 sep="_", strip.white = TRUE)
 
   # network file: generate df with number of entries
-  inner_conn <- length(input_df$target[input_df$target %in% input_df$source])
-  net_data_1 <- as.data.frame(c(inner_conn, (nrow(input_df) - inner_conn)))
+  inner_conn <- length(network$target[network$target %in% network$source])
+  net_data_1 <- as.data.frame(c(inner_conn, (nrow(network) - inner_conn)))
   colnames(net_data_1) <- "number_connections"
   net_data_1$type <- c("inner", "peripheral")
   net_data_1$condition <- out_prefix
 
-  print(paste("Total number of connections:", nrow(input_df)))
+  print(paste("Total number of connections:", nrow(network)))
   print(paste("Number of inner connections:", inner_conn))
-  print(paste("Number of peripheral connections:", (nrow(input_df) - inner_conn)))
+  print(paste("Number of peripheral connections:", (nrow(network) - inner_conn)))
 
   # plot bar chart
   gg <- ggplot(net_data_1, aes(x=condition, y=number_connections)) +
@@ -91,18 +95,18 @@ ananse_net_stats <- function(input_df, out_prefix, factors, out_dir) {
 
 
   # network file: generate df with number of TFs, targets
-  number_tf_targets <- length(unique(input_df$target[input_df$target %in% factors]))
-  net_data_2 <- as.data.frame(c(length(unique(input_df$source)),
+  number_tf_targets <- length(unique(network$target[network$target %in% factors]))
+  net_data_2 <- as.data.frame(c(length(unique(network$source)),
                                 number_tf_targets, 
-                                (length(unique(input_df$target))-number_tf_targets)))
+                                (length(unique(network$target))-number_tf_targets)))
   colnames(net_data_2) <- "number_factors"
   net_data_2$type <- c("Source", "Target", "Target")
   net_data_2$target <- c("1_TF", "1_TF", "2_non-TF")
   net_data_2$condition <- out_prefix
 
-  print(paste("Number of TFs:", length(unique(input_df$source))))
+  print(paste("Number of TFs:", length(unique(network$source))))
   print(paste("Number of targets that are TFs:", number_tf_targets))
-  print(paste("Number of targets that are non-TFs:", (length(unique(input_df$target))-number_tf_targets)))
+  print(paste("Number of targets that are non-TFs:", (length(unique(network$target))-number_tf_targets)))
 
   # plot bar chart
   gg <- ggplot(net_data_2, aes(x=type, y=number_factors)) +
@@ -132,9 +136,9 @@ ananse_net_stats <- function(input_df, out_prefix, factors, out_dir) {
   ggsave(filename=paste(out_dir, "/Ananse_network_", out_prefix, "_factors.pdf", sep=""), 
          plot=gg, device="pdf", dpi=300, useDingbats=FALSE)
 
-
+  
   # network file: generate df with cumulative binding score per TF, number of targets per TF
-  net_data_3 <- input_df %>% group_by(source) %>% summarise(sum_binding_probs=sum(prob))
+  net_data_3 <- network %>% group_by(source) %>% summarise(sum_binding_probs=sum(prob))
   name_col_2 <- paste("sum_binding_probs_", out_prefix, sep="")
   net_data_3 <- net_data_3[order(net_data_3$sum_binding_probs, decreasing=TRUE),]
   net_data_3$source <- factor(net_data_3$source, levels = net_data_3$source)
@@ -170,6 +174,13 @@ ananse_net_stats <- function(input_df, out_prefix, factors, out_dir) {
 
 
 ## function to subset network
+# network: Dataframe containing Ananse network output
+# source_genes: List of genes to subset network, based on "source" column
+# target_genes: List of genes to subset network, based on "target" column
+# prob_cutoff: Minimum probability value to subset network, based on "prob" column
+# edge_number: Number of top edges to subset network, based on "prob" column
+# out_prefix: Prefix to use in output names
+# out_dir: Directory containing output
 subset_network <- function(network, source_genes=NULL, target_genes=NULL, prob_cutoff=0, edge_number=0,
                            out_prefix, out_dir) {
 
@@ -242,7 +253,11 @@ subset_network <- function(network, source_genes=NULL, target_genes=NULL, prob_c
 
 
 ## function to plot subnetwork as graph and compute centrality
-net_graph <- function(subnet, out_prefix, motif_db="jaspar2020", out_dir) {
+# subnet: Dataframe containing (subset of) Ananse network output
+# motif_db: Name of Tf motif database used
+# out_prefix: Prefix to use in output names
+# out_dir: Directory containing output
+net_graph <- function(subnet, motif_db="jaspar2020", out_prefix, out_dir) {
 
   # create graph
   g <- graph.data.frame(subnet[,c("source", "target")], directed=TRUE, vertices=NULL)
@@ -280,7 +295,14 @@ net_graph <- function(subnet, out_prefix, motif_db="jaspar2020", out_dir) {
 
 
 ## function to compute the relative column sums of two dataframes with matching column names
-# and plot the column sums as dot plot
+## and plot the column sums as dot plot
+# df1: Vector of centrality values from network 1
+# df2: Vector of centrality values from network 2
+# out_prefix1: Prefix network 1 to use in output names
+# out_prefix2: Prefix network 2 to use in output names
+# genes: Number of genes to highlight on plot
+# motifs: Name of Tf motif database used
+# out_dir: Directory containing output
 plot_compare_colsums <- function(df1, df2, out_prefix1, out_prefix2, genes=10, 
                                  motifs="jaspar2020", out_dir) {
   sum1 <- as.data.frame(colSums(df1))
@@ -377,6 +399,12 @@ plot_compare_colsums <- function(df1, df2, out_prefix1, out_prefix2, genes=10,
 
 
 ## function to plot centrality measure across multiple networks as heatmap
+# input_file_list: List of csv files containing network centrality values
+# colnames_column: Name of column in csv files containing gene names
+# values_column: Name of column in csv files containing centrality values
+# subset_file: List of gene names to subset heatmap
+# out_prefix: Prefix to use in output names
+# out_dir: Directory containing output
 plot_compare_heatmap <- function(input_file_list, colnames_column, values_column, 
                                  subset_file=NULL, 
                                  out_prefix="ananse_network_heatmap_jaspar2020", out_dir) {
@@ -433,7 +461,6 @@ plot_compare_heatmap <- function(input_file_list, colnames_column, values_column
 
 
 
-
 ### Analysis 
 conditions_ananse <- read.table(paste(ananse_input_dir, "/conditions_ananse_RNA.txt", sep=""), 
                                 sep=" ")
@@ -463,7 +490,7 @@ for (k in seq(1, length(file_list))) {
   network$tf_target <- gsub("_", ".", network$tf_target)
   network$tf_target <- gsub("—", "_", network$tf_target)
 
-  out_files <- ananse_net_stats(input_df=network, out_prefix=condition_ananse, factors=factors,
+  out_files <- ananse_net_stats(network=network, out_prefix=condition_ananse, factors=factors,
                                 out_dir=ananse_output_dir)
   net_out_1 <- out_files[[1]]
   net_out_2 <- out_files[[2]]
