@@ -533,6 +533,7 @@ if (nrow(conditions_ananse) > 1) {
 
     # gradually shrink conditions_2 list to avoid duplicate comparisons
     conditions_2 <- as.data.frame(conditions_2[conditions_2$V1 != conditions_ananse[i,],])
+    colnames(conditions_2) <- "V1"
     #print(conditions_2)
 
     for (k in seq(1,nrow(conditions_2))) {
