@@ -40,7 +40,7 @@ if (!require("edgeR")) BiocManager::install("edgeR")
 # out_dir: Directory for output text file listing gene IDs of expressed genes
 extract_expressed_genes <- function(feature_counts_file, condition, rpkm_cutoff=2.5, out_dir) {
 
-  all_data <- read.table(feature_counts_file, header=TRUE)
+  all_data <- read.table(feature_counts_file, header=TRUE, sep="\t")
 
   # generate RPKM values
   rpkm_meta <- cbind(as.data.frame(all_data$gene_name), as.data.frame(all_data$gene_length))
